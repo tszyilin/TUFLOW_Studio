@@ -1,6 +1,7 @@
 [general]
 name=TUFLOW Studio
 qgisMinimumVersion=3.0
+qgisMaximumVersion=4.99
 description=TUFLOW project management: root paths, file editor, and run logs
 version=1.0.0
 author=tszyilin

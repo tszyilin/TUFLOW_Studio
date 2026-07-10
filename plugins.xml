@@ -5,6 +5,7 @@
     <about>Docked panel plugin for TUFLOW modellers with project folder tracking, control file editor with syntax checking, and run log extraction.</about>
     <version>1.0.0</version>
     <qgis_minimum_version>3.0</qgis_minimum_version>
+    <qgis_maximum_version>4.99</qgis_maximum_version>
     <homepage>https://github.com/tszyilin/TUFLOW_Studio</homepage>
     <file_name>TUFLOW_Studio.zip</file_name>
     <icon>icon.png</icon>
