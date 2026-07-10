@@ -69,7 +69,15 @@ class TabEditor(QWidget):
         left = QWidget()
         ll = QVBoxLayout(left)
         ll.setContentsMargins(0, 0, 0, 0)
-        ll.addWidget(QLabel('Command Files'))
+        lbl_row = QHBoxLayout()
+        lbl_row.addWidget(QLabel('Command Files'))
+        lbl_row.addStretch()
+        btn_scan = QPushButton('Scan')
+        btn_scan.setFixedWidth(50)
+        btn_scan.setToolTip('Rescan root folder for command files')
+        btn_scan.clicked.connect(self._rescan)
+        lbl_row.addWidget(btn_scan)
+        ll.addLayout(lbl_row)
         self._file_list = QListWidget()
         self._file_list.currentItemChanged.connect(self._on_file_selected)
         self._file_list.itemDoubleClicked.connect(self._rename_current_item)
@@ -171,6 +179,11 @@ class TabEditor(QWidget):
         )
 
     def set_root(self, root_path):
+        self._root_path = root_path
+        self._rescan()
+
+    def _rescan(self):
+        root_path = getattr(self, '_root_path', '')
         self._file_list.clear()
         if not root_path or not os.path.isdir(root_path):
             return
