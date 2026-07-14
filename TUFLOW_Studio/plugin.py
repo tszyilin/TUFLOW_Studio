@@ -26,6 +26,7 @@ class TUFLOWStudio:
         self.iface.mainWindow().addDockWidget(Qt.TopDockWidgetArea, self._dock)
         self._dock.setFloating(True)
         self._dock.resize(1400, 900)
+        self._dock.hide()
 
         icon_path = os.path.join(os.path.dirname(__file__), 'icon.png')
         self._action = QAction(QIcon(icon_path), 'TUFLOW Studio', self.iface.mainWindow())
