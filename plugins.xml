@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugins>
-  <pyqgis_plugin name="TUFLOW Studio" version="1.1.0">
-    <description>TUFLOW project management: root paths, file editor, and run logs</description>
-    <about>Docked panel plugin for TUFLOW modellers with project folder tracking, control file editor with syntax checking, and run log extraction.</about>
-    <version>1.1.0</version>
+  <pyqgis_plugin name="TUFLOW Studio" version="1.2.0">
+    <description>TUFLOW project management: root paths, file editor, run logs, and BC input comparison</description>
+    <about>Docked panel plugin for TUFLOW modellers with project folder tracking, control file editor with syntax checking, run log extraction, and a BC Inputs tab to compare hydrograph and rainfall data across events.</about>
+    <version>1.2.0</version>
     <qgis_minimum_version>3.0</qgis_minimum_version>
     <qgis_maximum_version>4.99</qgis_maximum_version>
     <homepage>https://github.com/tszyilin/TUFLOW_Studio</homepage>
@@ -12,8 +12,8 @@
     <author_name>tszyilin</author_name>
     <download_url>https://raw.githubusercontent.com/tszyilin/TUFLOW_Studio/master/TUFLOW_Studio.zip</download_url>
     <create_date>2026-07-10</create_date>
-    <update_date>2026-07-10</update_date>
-    <changelog>v1.1.0: Added Scan button in Editor tab to rescan root folder for command files</changelog>
+    <update_date>2026-07-14</update_date>
+    <changelog>v1.2.0: Added Inputs tab to compare hydrograph/rainfall from BC database as a matplotlib chart; Editor now includes .bat files; file list grouped by extension</changelog>
     <experimental>False</experimental>
     <deprecated>False</deprecated>
     <tracker>https://github.com/tszyilin/TUFLOW_Studio/issues</tracker>

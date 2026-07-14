@@ -16,6 +16,7 @@ COMMAND_FILE_EXTS = {
     '.adcf',  # J - ADCF
     '.tef',   # K - TEF
     '.trd',
+    '.bat',
 }
 _EXCLUDE_HPC = re.compile(r'\.hpc\.tlf$', re.IGNORECASE)
 

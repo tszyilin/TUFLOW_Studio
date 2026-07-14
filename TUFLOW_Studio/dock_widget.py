@@ -5,6 +5,7 @@ from qgis.PyQt.QtGui import QFont, QFontDatabase
 from .tab_root import TabRoot
 from .tab_editor import TabEditor
 from .tab_logs import TabLogs
+from .tab_inputs import TabInputs
 from .tab_settings import TabSettings
 
 _BASE_TITLE = 'TUFLOW Studio'
@@ -35,11 +36,13 @@ class TUFLOWStudioDock(QDockWidget):
         self._tab_root     = TabRoot()
         self._tab_editor   = TabEditor()
         self._tab_logs     = TabLogs()
+        self._tab_inputs   = TabInputs()
         self._tab_settings = TabSettings()
 
         self._tabs.addTab(self._tab_root,     'Root')
         self._tabs.addTab(self._tab_editor,   'Editor')
         self._tabs.addTab(self._tab_logs,     'Logs')
+        self._tabs.addTab(self._tab_inputs,   'Inputs')
         self._tabs.addTab(self._tab_settings, 'Settings')
 
         self._tab_settings.font_changed.connect(self._tab_editor.apply_font)
@@ -53,6 +56,7 @@ class TUFLOWStudioDock(QDockWidget):
         self._tab_root.busy_changed.connect(self._set_busy)
         self._tab_editor.busy_changed.connect(self._set_busy)
         self._tab_logs.busy_changed.connect(self._set_busy)
+        self._tab_inputs.busy_changed.connect(self._set_busy)
 
     # ------------------------------------------------------------------
     # Animated title
@@ -84,6 +88,7 @@ class TUFLOWStudioDock(QDockWidget):
         if log_dir:
             log_dir = os.path.join(log_dir, 'log')
         self._tab_logs.set_log_dir(log_dir)
+        self._tab_inputs.set_bc_dbase_dir(paths.get('bc_dbase', ''))
 
     def load_project_settings(self):
         self._tab_root.load_from_project()

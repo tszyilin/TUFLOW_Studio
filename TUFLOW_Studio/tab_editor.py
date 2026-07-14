@@ -14,8 +14,11 @@ from .tuflow_highlighter import TuflowHighlighter
 from .tlf_parser import find_command_files
 from .tcf_checker import check_file
 
-_ERR_BG  = QColor('#FFCDD2')
-_WARN_BG = QColor('#FFF9C4')
+_ERR_BG   = QColor('#FFCDD2')
+_WARN_BG  = QColor('#FFF9C4')
+_HDR_BG   = QColor('#D0D0D0')
+_HDR_FG   = QColor('#444444')
+
 
 
 class _CheckWorker(QThread):
@@ -70,7 +73,7 @@ class TabEditor(QWidget):
         ll = QVBoxLayout(left)
         ll.setContentsMargins(0, 0, 0, 0)
         lbl_row = QHBoxLayout()
-        lbl_row.addWidget(QLabel('Command Files'))
+        lbl_row.addWidget(QLabel('Command & Batch Files'))
         lbl_row.addStretch()
         btn_scan = QPushButton('Scan')
         btn_scan.setFixedWidth(50)
@@ -187,19 +190,36 @@ class TabEditor(QWidget):
         self._file_list.clear()
         if not root_path or not os.path.isdir(root_path):
             return
-        for path in find_command_files(root_path):
-            item = QListWidgetItem(os.path.basename(path))
-            item.setData(Qt.UserRole, path)
-            item.setToolTip(path)
-            item.setFlags(item.flags() | Qt.ItemIsEditable)
-            self._file_list.addItem(item)
+
+        all_files = find_command_files(root_path)
+        by_ext = {}
+        for path in all_files:
+            ext = os.path.splitext(path)[1].lower()
+            by_ext.setdefault(ext, []).append(path)
+
+        for ext in sorted(by_ext):
+            h = QListWidgetItem(f'  {ext}')
+            h.setFlags(Qt.NoItemFlags)
+            h.setBackground(_HDR_BG)
+            h.setForeground(_HDR_FG)
+            font = h.font()
+            font.setBold(True)
+            h.setFont(font)
+            h.setData(Qt.UserRole, None)
+            self._file_list.addItem(h)
+            for path in by_ext[ext]:
+                item = QListWidgetItem(os.path.basename(path))
+                item.setData(Qt.UserRole, path)
+                item.setToolTip(path)
+                item.setFlags(item.flags() | Qt.ItemIsEditable)
+                self._file_list.addItem(item)
 
     # ------------------------------------------------------------------
     # File loading / saving
     # ------------------------------------------------------------------
     def _on_file_selected(self, current, _previous):
-        if current is None:
-            return
+        if current is None or current.data(Qt.UserRole) is None:
+            return  # header row
         if self._dirty:
             self._auto_save()
         self._load_file(current.data(Qt.UserRole))
@@ -219,6 +239,8 @@ class TabEditor(QWidget):
             self._dirty = False
             self._results_table.setRowCount(0)
             self._editor.clear_check_highlights()
+            is_bat = os.path.splitext(path)[1].lower() == '.bat'
+            self._btn_debug.setEnabled(not is_bat)
         except OSError as e:
             QMessageBox.warning(self, 'TUFLOW Studio', f'Cannot open file:\n{e}')
         finally:
@@ -236,7 +258,7 @@ class TabEditor(QWidget):
 
     def _rename_current_item(self, item=None):
         item = item or self._file_list.currentItem()
-        if item:
+        if item and item.data(Qt.UserRole) is not None:  # not a header
             self._file_list.editItem(item)
 
     def _on_item_renamed(self, item):
