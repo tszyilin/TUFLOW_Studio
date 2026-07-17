@@ -1,3 +1,4 @@
+import difflib
 import os
 import re
 
@@ -22,6 +23,29 @@ _NON_FILE_KEYWORDS = re.compile(
     r'start\s+output|end\s+output)',
     re.IGNORECASE,
 )
+
+
+_IF_KEYWORDS = ('SCENARIO', 'EVENT')
+
+
+def _check_if_keyword(upper_line, lineno, issues):
+    """Warn if the keyword after IF / ELSE IF looks like a typo of SCENARIO or EVENT."""
+    m = re.match(r'^(?:ELSE\s+)?IF\s+(\S+)', upper_line)
+    if not m:
+        return
+    word = m.group(1)
+    if word in _IF_KEYWORDS:
+        return
+    # Ignore TUFLOW variable placeholders like <<VAR>>
+    if word.startswith('<<'):
+        return
+    close = difflib.get_close_matches(word, _IF_KEYWORDS, n=1, cutoff=0.7)
+    if close:
+        issues.append({
+            'line': lineno, 'level': 'warning',
+            'issue_type': 'Possible Keyword Typo',
+            'message': f'"{word.title()}" looks like a typo of "{close[0].title()}"',
+        })
 
 
 def check_file(filepath):
@@ -87,7 +111,9 @@ def check_file(filepath):
         # --- If/Else/End If tracking ---
         if re.match(r'^IF\b', upper):
             if_stack.append(i)
+            _check_if_keyword(upper, i, issues)
         elif re.match(r'^ELSE\s+IF\b', upper):
+            _check_if_keyword(upper, i, issues)
             if not if_stack:
                 issues.append({
                     'line': i, 'level': 'error',
@@ -149,9 +175,17 @@ def check_file(filepath):
                     continue
                 _, ext = os.path.splitext(rhs)
                 has_sep = ('\\' in rhs or '/' in rhs)
-                if ext.lower() in _FILE_EXTS or (has_sep and ext):
+                if ext.lower() in _FILE_EXTS or has_sep:
                     resolved = os.path.normpath(os.path.join(base_dir, rhs))
-                    if not os.path.exists(resolved):
+                    if ext:
+                        exists = os.path.exists(resolved)
+                    else:
+                        # No extension — TUFLOW GIS commands often omit it; probe candidates
+                        _GIS_EXTS = ('.shp', '.mif', '.gpkg', '.tif', '.tiff', '.flt', '.asc')
+                        exists = os.path.exists(resolved) or any(
+                            os.path.exists(resolved + e) for e in _GIS_EXTS
+                        )
+                    if not exists:
                         issues.append({
                             'line': i, 'level': 'error',
                             'issue_type': 'Missing File',
