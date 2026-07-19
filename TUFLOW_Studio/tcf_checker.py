@@ -20,7 +20,7 @@ _NON_FILE_KEYWORDS = re.compile(
     r'timestep|output\s+interval|map\s+output\s+interval|log\s+interval|'
     r'number\s+of|simulation\s+id|projection|coordinate\s+system|'
     r'define\s+event|end\s+define|bc\s+event\s+source|'
-    r'start\s+output|end\s+output)',
+    r'start\s+output|end\s+output|log\s+folder|output\s+folder)',
     re.IGNORECASE,
 )
 
@@ -172,6 +172,8 @@ def check_file(filepath):
             rhs_full = line.split('==', 1)[1].strip()
             for rhs in (p.strip() for p in rhs_full.split('|')):
                 if not rhs:
+                    continue
+                if '<<' in rhs:
                     continue
                 _, ext = os.path.splitext(rhs)
                 has_sep = ('\\' in rhs or '/' in rhs)
