@@ -14,7 +14,7 @@
     <create_date>2026-07-10</create_date>
     <update_date>2026-07-20</update_date>
     <changelog>v1.2.3: Added feedback button ([?] in tab bar) to send bug reports and feedback via email
-v1.2.2: TCF checker no longer flags Log Folder/Output Folder or paths with << >> variables as missing files
+v1.2.2: TCF checker no longer flags Log Folder/Output Folder or paths with &lt;&lt; &gt;&gt; variables as missing files
 v1.2.1: Removed Inputs tab; TCF checker now detects typos in IF/ELSE IF keyword (e.g. Scneario)
 v1.2.0: Editor now includes .bat files; file list grouped by extension; dock starts hidden by default</changelog>
     <experimental>False</experimental>
