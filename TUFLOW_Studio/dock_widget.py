@@ -1,5 +1,5 @@
 import os
-from qgis.PyQt.QtWidgets import QDockWidget, QTabWidget
+from qgis.PyQt.QtWidgets import QDockWidget, QPushButton, QTabWidget
 from qgis.PyQt.QtCore import Qt, QTimer
 from qgis.PyQt.QtGui import QFont, QFontDatabase
 from .tab_root import TabRoot
@@ -44,6 +44,12 @@ class TUFLOWStudioDock(QDockWidget):
 
         self._tab_settings.font_changed.connect(self._tab_editor.apply_font)
 
+        btn_fb = QPushButton('?')
+        btn_fb.setFixedSize(24, 24)
+        btn_fb.setToolTip('Send feedback or report a bug')
+        btn_fb.clicked.connect(self._open_feedback)
+        self._tabs.setCornerWidget(btn_fb, Qt.TopRightCorner)
+
         self.setWidget(self._tabs)
 
         # Propagate root paths to Editor and Logs
@@ -84,6 +90,10 @@ class TUFLOWStudioDock(QDockWidget):
         if log_dir:
             log_dir = os.path.join(log_dir, 'log')
         self._tab_logs.set_log_dir(log_dir)
+
+    def _open_feedback(self):
+        from .feedback_dialog import FeedbackDialog
+        FeedbackDialog(self).exec()
 
     def load_project_settings(self):
         self._tab_root.load_from_project()
