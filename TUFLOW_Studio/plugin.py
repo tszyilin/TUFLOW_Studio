@@ -28,6 +28,11 @@ class TUFLOWStudio:
         self._dock.resize(1400, 900)
         self._dock.hide()
 
+        # QGIS restores the dock's last saved visibility/geometry after
+        # initGui() runs, which can re-show it even though we just hid it.
+        # Force it hidden again once that restore has actually happened.
+        self.iface.initializationCompleted.connect(self._dock.hide)
+
         icon_path = os.path.join(os.path.dirname(__file__), 'icon.png')
         self._action = QAction(QIcon(icon_path), 'TUFLOW Studio', self.iface.mainWindow())
         self._action.setCheckable(True)
@@ -48,6 +53,7 @@ class TUFLOWStudio:
             'TUFLOW Studio', 'TUFLOW project has been saved.')
 
     def unload(self):
+        self.iface.initializationCompleted.disconnect(self._dock.hide)
         QgsProject.instance().projectSaved.disconnect(self._on_project_saved)
         QgsProject.instance().readProject.disconnect(self._dock.load_project_settings)
         self.iface.removePluginMenu('TUFLOW Studio', self._action)
